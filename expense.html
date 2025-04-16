@@ -1,0 +1,1555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker | Expenses</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6c5ce7;
+            --secondary: #a29bfe;
+            --dark: #2d3436;
+            --light-dark: #636e72;
+            --light: #dfe6e9;
+            --danger: #d63031;
+            --warning: #fdcb6e;
+            --success: #00b894;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--dark);
+            color: var(--light);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--light-dark);
+            margin-bottom: 30px;
+        }
+/* ======= Navbar Styles ======= */
+.navbar {
+  background-color: #3a3f44;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--light-dark);
+}
+
+.navbar-brand {
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--primary);
+}
+
+.navbar-links {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.nav-link {
+  color: var(--light);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 5px;
+  transition: background 0.3s;
+}
+
+.nav-link:hover, .nav-link.active {
+  background-color: rgba(108, 92, 231, 0.2);
+  color: var(--primary);
+}
+
+.auth-buttons {
+  display: flex;
+  gap: 10px;
+  margin-left: 20px;
+}
+
+.navbar-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--light);
+  font-size: 20px;
+  cursor: pointer;
+}
+
+/* Mobile Nav */
+.mobile-nav {
+  display: none;
+  justify-content: space-around;
+  background-color: #3a3f44;
+  padding: 10px 0;
+  border-top: 1px solid var(--light-dark);
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+
+.mobile-nav-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: var(--light);
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.mobile-nav-link i {
+  font-size: 18px;
+  margin-bottom: 5px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .navbar-links {
+    display: none;
+    position: absolute;
+    top: 70px;
+    left: 0;
+    right: 0;
+    background-color: #3a3f44;
+    flex-direction: column;
+    padding: 20px;
+    gap: 15px;
+    z-index: 1000;
+  }
+
+  .navbar-links.active {
+    display: flex;
+  }
+
+  .navbar-toggle {
+    display: block;
+  }
+
+  .mobile-nav {
+    display: flex;
+  }
+}
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .auth-buttons button {
+            padding: 8px 15px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            margin-left: 10px;
+        }
+
+        .signup-btn {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .login-btn {
+            background-color: transparent;
+            color: var(--light);
+            border: 1px solid var(--light);
+        }
+
+        .page-title {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .expense-controls {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: var(--light-dark);
+            color: white;
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .filter-controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-controls select, .filter-controls input {
+            padding: 8px 12px;
+            border-radius: 5px;
+            border: 1px solid var(--light-dark);
+            background-color: #4a4f54;
+            color: var(--light);
+        }
+
+        .expense-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .summary-card {
+            background-color: #3a3f44;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .summary-card h4 {
+            margin-bottom: 10px;
+            color: var(--secondary);
+            font-size: 14px;
+        }
+
+        .summary-card .amount {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .expense {
+            color: var(--danger);
+        }
+
+        .limit {
+            color: var(--warning);
+        }
+
+        .remaining {
+            color: var(--success);
+        }
+
+        .expense-list {
+            background-color: #3a3f44;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .expense-list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .expense-list-title {
+            font-size: 20px;
+            color: var(--secondary);
+        }
+
+        .expense-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--light-dark);
+        }
+
+        .expense-item:last-child {
+            border-bottom: none;
+        }
+
+        .expense-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .expense-category {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--primary);
+        }
+
+        .expense-details {
+            flex-grow: 1;
+        }
+
+        .expense-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .expense-date {
+            font-size: 12px;
+            color: var(--light-dark);
+        }
+
+        .expense-amount {
+            font-weight: bold;
+            color: var(--danger);
+        }
+
+        .expense-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            color: var(--light-dark);
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .action-btn:hover {
+            color: var(--light);
+        }
+
+        .edit-btn:hover {
+            color: var(--warning);
+        }
+
+        .delete-btn:hover {
+            color: var(--danger);
+        }
+
+        .no-expenses {
+            text-align: center;
+            padding: 30px;
+            color: var(--light-dark);
+        }
+
+        .limit-container {
+            background-color: #3a3f44;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .limit-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .limit-title {
+            font-size: 20px;
+            color: var(--secondary);
+        }
+
+        .limit-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--light-dark);
+        }
+
+        .limit-item:last-child {
+            border-bottom: none;
+        }
+
+        .limit-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .limit-category {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--primary);
+        }
+
+        .limit-details {
+            flex-grow: 1;
+        }
+
+        .limit-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .limit-amount {
+            font-size: 14px;
+        }
+
+        .limit-progress {
+            height: 5px;
+            background-color: var(--light-dark);
+            border-radius: 5px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+
+        .limit-progress-bar {
+            height: 100%;
+            background-color: var(--danger);
+            border-radius: 5px;
+        }
+
+        .limit-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-around;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: #3a3f44;
+            padding: 15px 0;
+            border-top: 1px solid var(--light-dark);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--light);
+            text-decoration: none;
+            font-size: 12px;
+        }
+
+        .nav-item i {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
+
+        @media (min-width: 768px) {
+            .nav {
+                display: none;
+            }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #3a3f44;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .close-modal {
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid var(--light-dark);
+            background-color: #4a4f54;
+            color: var(--light);
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+            gap: 10px;
+        }
+        
+        /* Login/Signup Modal */
+        .auth-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .auth-modal-content {
+            background-color: #3a3f44;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+        }
+        
+        .auth-modal-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .auth-modal-header h3 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        .auth-modal-header p {
+            color: var(--light-dark);
+        }
+        
+        .auth-form-group {
+            margin-bottom: 15px;
+        }
+        
+        .auth-form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--light);
+        }
+        
+        .auth-form-group input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid var(--light-dark);
+            background-color: #4a4f54;
+            color: var(--light);
+        }
+        
+        .auth-form-actions {
+            margin-top: 25px;
+        }
+        
+        .auth-submit-btn {
+            width: 100%;
+            padding: 12px;
+            border-radius: 5px;
+            border: none;
+            background-color: var(--primary);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+        
+        .auth-switch-text {
+            text-align: center;
+            color: var(--light-dark);
+        }
+        
+        .auth-switch-link {
+            color: var(--primary);
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        
+        /* View All Expenses Modal */
+        .view-all-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .view-all-content {
+            background-color: #3a3f44;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .view-all-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .view-all-title {
+            font-size: 20px;
+            color: var(--secondary);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+    <!-- ======= Navigation Bar ======= -->
+<nav class="navbar">
+  <div class="navbar-brand">ExpenseTracker</div>
+  <div class="navbar-links" id="navbarLinks">
+    <a href="index.html" class="nav-link"><i class="fas fa-home"></i> Dashboard</a>
+    <a href="expenses.html" class="nav-link active"><i class="fas fa-wallet"></i> Expenses</a>
+    <a href="goals.html" class="nav-link"><i class="fas fa-bullseye"></i> Goals</a>
+        <div class="auth-buttons">
+      <button class="login-btn" id="openLoginBtn"><i class="fas fa-sign-in-alt"></i> Login</button>
+      <button class="signup-btn" id="openSignupBtn"><i class="fas fa-user-plus"></i> Sign Up</button>
+    </div>
+  </div>
+  <button class="navbar-toggle" id="navbarToggle">
+    <i class="fas fa-bars"></i>
+  </button>
+</nav>
+
+<!-- Mobile Bottom Nav (for small screens) -->
+<div class="mobile-nav">
+  <a href="index.html" class="mobile-nav-link"><i class="fas fa-home"></i><span>Dashboard</span></a>
+  <a href="expenses.html" class="mobile-nav-link active"><i class="fas fa-wallet"></i><span>Expenses</span></a>
+  <a href="goals.html" class="mobile-nav-link"><i class="fas fa-bullseye"></i><span>Goals</span></a>
+  </div>
+
+        <h1 class="page-title">Expenses</h1>
+
+        <div class="expense-controls">
+            <button class="btn btn-primary" id="addExpenseBtn">
+                <i class="fas fa-plus"></i> Add Expense
+            </button>
+            <div class="filter-controls">
+                <select id="monthFilter">
+                    <option value="">All Months</option>
+                    <option value="1">January</option>
+                    <option value="2">February</option>
+                    <option value="3">March</option>
+                    <option value="4">April</option>
+                    <option value="5">May</option>
+                    <option value="6">June</option>
+                    <option value="7">July</option>
+                    <option value="8">August</option>
+                    <option value="9">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+                </select>
+                <select id="categoryFilter">
+                    <option value="">All Categories</option>
+                    <option value="food">Food</option>
+                    <option value="transport">Transport</option>
+                    <option value="entertainment">Entertainment</option>
+                    <option value="bills">Bills</option>
+                    <option value="shopping">Shopping</option>
+                    <option value="others">Others</option>
+                </select>
+                <input type="text" id="searchExpense" placeholder="Search expenses...">
+            </div>
+        </div>
+
+        <div class="expense-summary">
+            <div class="summary-card">
+                <h4>Total Spent</h4>
+                <div class="amount expense" id="totalSpent">₹0</div>
+            </div>
+            <div class="summary-card">
+                <h4>Monthly Budget</h4>
+                <div class="amount limit" id="monthlyBudget">₹25,000</div>
+            </div>
+            <div class="summary-card">
+                <h4>Remaining</h4>
+                <div class="amount remaining" id="remainingBudget">₹25,000</div>
+            </div>
+            <div class="summary-card">
+                <h4>Daily Average</h4>
+                <div class="amount expense" id="dailyAverage">₹0</div>
+            </div>
+        </div>
+
+        <div class="expense-list">
+            <div class="expense-list-header">
+                <h3 class="expense-list-title">Recent Expenses</h3>
+                <button class="btn btn-secondary" id="viewAllBtn">View All</button>
+            </div>
+            
+            <div id="expensesContainer">
+                <!-- Expense items will be added here dynamically -->
+            </div>
+        </div>
+
+        <div class="limit-container">
+            <div class="limit-header">
+                <h3 class="limit-title">Expense Limits</h3>
+                <button class="btn btn-primary" id="addLimitBtn">
+                    <i class="fas fa-plus"></i> Add Limit
+                </button>
+            </div>
+            
+            <div id="limitsContainer">
+                <!-- Limit items will be added here dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <div class="nav">
+        <a href="index.html" class="nav-item">
+            <i class="fas fa-home"></i>
+            <span>Dashboard</span>
+        </a>
+        <a href="expenses.html" class="nav-item active">
+            <i class="fas fa-wallet"></i>
+            <span>Expenses</span>
+        </a>
+        <a href="goals.html" class="nav-item">
+            <i class="fas fa-bullseye"></i>
+            <span>Goals</span>
+        </a>
+        <a href="reports.html" class="nav-item">
+            <i class="fas fa-chart-pie"></i>
+            <span>Reports</span>
+        </a>
+    </div>
+
+    <!-- Add Expense Modal -->
+    <div class="modal" id="expenseModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add New Expense</h3>
+                <span class="close-modal">&times;</span>
+            </div>
+            <form id="expenseForm">
+                <div class="form-group">
+                    <label for="expenseName">Expense Name</label>
+                    <input type="text" id="expenseName" placeholder="Enter expense name" required>
+                </div>
+                <div class="form-group">
+                    <label for="expenseAmount">Amount (₹)</label>
+                    <input type="number" id="expenseAmount" placeholder="Enter amount" required>
+                </div>
+                <div class="form-group">
+                    <label for="expenseCategory">Category</label>
+                    <select id="expenseCategory" required>
+                        <option value="">Select Category</option>
+                        <option value="food">Food</option>
+                        <option value="transport">Transport</option>
+                        <option value="entertainment">Entertainment</option>
+                        <option value="bills">Bills</option>
+                        <option value="shopping">Shopping</option>
+                        <option value="others">Others</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="expenseDate">Date</label>
+                    <input type="date" id="expenseDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="expensePayment">Payment Method</label>
+                    <select id="expensePayment">
+                        <option value="cash">Cash</option>
+                        <option value="upi">UPI</option>
+                        <option value="debit">Debit Card</option>
+                        <option value="credit">Credit Card</option>
+                        <option value="bank">Bank Transfer</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelExpenseBtn">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Expense</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Limit Modal -->
+    <div class="modal" id="limitModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add Expense Limit</h3>
+                <span class="close-modal">&times;</span>
+            </div>
+            <form id="limitForm">
+                <div class="form-group">
+                    <label for="limitCategory">Category</label>
+                    <select id="limitCategory" required>
+                        <option value="">Select Category</option>
+                        <option value="food">Food</option>
+                        <option value="transport">Transport</option>
+                        <option value="entertainment">Entertainment</option>
+                        <option value="bills">Bills</option>
+                        <option value="shopping">Shopping</option>
+                        <option value="others">Others</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="limitAmount">Limit Amount (₹)</label>
+                    <input type="number" id="limitAmount" placeholder="Enter limit amount" required>
+                </div>
+                <div class="form-group">
+                    <label for="limitPeriod">Period</label>
+                    <select id="limitPeriod" required>
+                        <option value="monthly">Monthly</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="daily">Daily</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelLimitBtn">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Limit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Login Modal -->
+    <div class="auth-modal" id="loginModal">
+        <div class="auth-modal-content">
+            <div class="auth-modal-header">
+                <h3>Welcome Back</h3>
+                <p>Login to continue to ExpenseTracker</p>
+            </div>
+            <form id="loginForm">
+                <div class="auth-form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" placeholder="Enter your email" required>
+                </div>
+                <div class="auth-form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                </div>
+                <div class="auth-form-actions">
+                    <button type="submit" class="auth-submit-btn">Login</button>
+                    <p class="auth-switch-text">Don't have an account? <span class="auth-switch-link" id="switchToSignup">Sign up</span></p>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Signup Modal -->
+    <div class="auth-modal" id="signupModal">
+        <div class="auth-modal-content">
+            <div class="auth-modal-header">
+                <h3>Create Account</h3>
+                <p>Join ExpenseTracker to manage your finances</p>
+            </div>
+            <form id="signupForm">
+                <div class="auth-form-group">
+                    <label for="signupName">Full Name</label>
+                    <input type="text" id="signupName" placeholder="Enter your full name" required>
+                </div>
+                <div class="auth-form-group">
+                    <label for="signupEmail">Email</label>
+                    <input type="email" id="signupEmail" placeholder="Enter your email" required>
+                </div>
+                <div class="auth-form-group">
+                    <label for="signupPassword">Password</label>
+                    <input type="password" id="signupPassword" placeholder="Create a password" required>
+                </div>
+                <div class="auth-form-group">
+                    <label for="signupConfirmPassword">Confirm Password</label>
+                    <input type="password" id="signupConfirmPassword" placeholder="Confirm your password" required>
+                </div>
+                <div class="auth-form-actions">
+                    <button type="submit" class="auth-submit-btn">Sign Up</button>
+                    <p class="auth-switch-text">Already have an account? <span class="auth-switch-link" id="switchToLogin">Login</span></p>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- View All Expenses Modal -->
+    <div class="view-all-modal" id="viewAllModal">
+        <div class="view-all-content">
+            <div class="view-all-header">
+                <h3 class="view-all-title">All Expenses</h3>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div id="allExpensesContainer">
+                <!-- All expenses will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+      // Global variables
+let expenses = JSON.parse(localStorage.getItem('expenses')) || [];
+let categoryLimits = JSON.parse(localStorage.getItem('categoryLimits')) || {
+    Food: 6000,
+    Transport: 3500,
+    Entertainment: 3000,
+    Bills: 5000,
+    Shopping: 4000,
+    Others: 2000
+};
+let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
+const monthlyBudget = 25000;
+
+// DOM Elements
+const addExpenseBtn = document.getElementById('addExpenseBtn');
+const viewAllBtn = document.getElementById('viewAllBtn');
+const addLimitBtn = document.getElementById('addLimitBtn');
+const expenseModal = document.getElementById('expenseModal');
+const limitModal = document.getElementById('limitModal');
+const viewAllModal = document.getElementById('viewAllModal');
+const loginModal = document.getElementById('loginModal');
+const signupModal = document.getElementById('signupModal');
+const openLoginBtn = document.getElementById('openLoginBtn');
+const openSignupBtn = document.getElementById('openSignupBtn');
+const switchToSignup = document.getElementById('switchToSignup');
+const switchToLogin = document.getElementById('switchToLogin');
+const loginForm = document.getElementById('loginForm');
+const signupForm = document.getElementById('signupForm');
+const authButtons = document.querySelector('.auth-buttons');
+
+// Initialize the app
+document.addEventListener('DOMContentLoaded', function() {
+    checkAuthStatus();
+    renderExpenses();
+    updateSummary();
+    updateCategoryLimits();
+    setupEventListeners();
+    
+    // Set default date to today
+    document.getElementById('expenseDate').valueAsDate = new Date();
+});
+
+// Check authentication status
+function checkAuthStatus() {
+    currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (currentUser) {
+        authButtons.innerHTML = `
+            <span style="color: var(--light); margin-right: 10px;">Hi, ${currentUser.name.split(' ')[0]}</span>
+            <button class="btn btn-danger" id="logoutBtn">Logout</button>
+        `;
+        document.getElementById('logoutBtn').addEventListener('click', logout);
+    } else {
+        authButtons.innerHTML = `
+            <button class="login-btn" id="openLoginBtn"><i class="fas fa-sign-in-alt"></i> Login</button>
+            <button class="signup-btn" id="openSignupBtn"><i class="fas fa-user-plus"></i> Sign Up</button>
+        `;
+        resetData();
+    }
+}
+
+// Reset data when logged out
+function resetData() {
+    expenses = [];
+    localStorage.removeItem('expenses');
+    document.getElementById('expensesContainer').innerHTML = '<div class="no-expenses">Please login to view expenses</div>';
+    document.getElementById('totalSpent').textContent = '₹0';
+    document.getElementById('remainingBudget').textContent = '₹0';
+    document.getElementById('dailyAverage').textContent = '₹0';
+}
+
+// Format currency
+function formatCurrency(amount) {
+    return '₹' + amount.toLocaleString('en-IN');
+}
+
+// Update summary
+function updateSummary() {
+    const totalSpent = expenses
+        .filter(exp => exp.type === 'expense')
+        .reduce((sum, exp) => sum + parseFloat(exp.amount), 0);
+    
+    const remaining = monthlyBudget - totalSpent;
+    const daysInMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
+    const daysPassed = new Date().getDate();
+    const dailyAverage = totalSpent / daysPassed;
+    
+    document.getElementById('totalSpent').textContent = formatCurrency(totalSpent);
+    document.getElementById('remainingBudget').textContent = formatCurrency(remaining > 0 ? remaining : 0);
+    document.getElementById('dailyAverage').textContent = formatCurrency(dailyAverage);
+}
+
+// Update category limits
+function updateCategoryLimits() {
+    const categorySpending = {};
+    
+    // Calculate spending per category
+    expenses.forEach(expense => {
+        if (expense.type === 'expense') {
+            if (!categorySpending[expense.category]) {
+                categorySpending[expense.category] = 0;
+            }
+            categorySpending[expense.category] += parseFloat(expense.amount);
+        }
+    });
+    
+    // Update the UI for each category limit
+    const limitsContainer = document.getElementById('limitsContainer');
+    limitsContainer.innerHTML = '';
+    
+    for (const category in categoryLimits) {
+        const limitAmount = categoryLimits[category] || 0;
+        const spentAmount = categorySpending[category] || 0;
+        const percentage = limitAmount > 0 ? Math.min(100, (spentAmount / limitAmount) * 100) : 0;
+        
+        const categoryIcons = {
+            Food: 'fa-utensils',
+            Transport: 'fa-bus',
+            Entertainment: 'fa-film',
+            Bills: 'fa-file-invoice-dollar',
+            Shopping: 'fa-shopping-bag',
+            Others: 'fa-ellipsis-h'
+        };
+        
+        const limitItem = document.createElement('div');
+        limitItem.className = 'limit-item';
+        limitItem.innerHTML = `
+            <div class="limit-info">
+                <div class="limit-category">
+                    <i class="fas ${categoryIcons[category] || 'fa-wallet'}"></i>
+                </div>
+                <div class="limit-details">
+                    <div class="limit-name">${category}</div>
+                    <div class="limit-amount">${formatCurrency(spentAmount)} / ${formatCurrency(limitAmount)}</div>
+                    <div class="limit-progress">
+                        <div class="limit-progress-bar" style="width: ${percentage}%"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="limit-actions">
+                <button class="action-btn edit-btn" data-category="${category}"><i class="fas fa-edit"></i></button>
+                <button class="action-btn delete-btn" data-category="${category}"><i class="fas fa-trash"></i></button>
+            </div>
+        `;
+        
+        limitsContainer.appendChild(limitItem);
+        
+        // Add event listeners to the buttons
+        limitItem.querySelector('.edit-btn').addEventListener('click', function() {
+            editLimit(category);
+        });
+        
+        limitItem.querySelector('.delete-btn').addEventListener('click', function() {
+            deleteLimit(category);
+        });
+    }
+}
+
+// Render expenses
+function renderExpenses(expensesToRender = expenses, containerId = 'expensesContainer', showAll = false) {
+    const expensesContainer = document.getElementById(containerId);
+    expensesContainer.innerHTML = '';
+    
+    if (!currentUser) {
+        expensesContainer.innerHTML = '<div class="no-expenses">Please login to view expenses</div>';
+        return;
+    }
+    
+    if (expensesToRender.length === 0) {
+        expensesContainer.innerHTML = '<div class="no-expenses">No expenses recorded yet</div>';
+        return;
+    }
+    
+    // Sort by date (newest first)
+    const sortedExpenses = [...expensesToRender].sort((a, b) => new Date(b.date) - new Date(a.date));
+    
+    // Show only the last 5 expenses if not showing all
+    const expensesToShow = showAll ? sortedExpenses : sortedExpenses.slice(0, 5);
+    
+    expensesToShow.forEach(expense => {
+        const expenseDate = new Date(expense.date);
+        const today = new Date();
+        const yesterday = new Date(today);
+        yesterday.setDate(yesterday.getDate() - 1);
+        
+        let dateString;
+        if (expenseDate.toDateString() === today.toDateString()) {
+            dateString = 'Today';
+        } else if (expenseDate.toDateString() === yesterday.toDateString()) {
+            dateString = 'Yesterday';
+        } else {
+            dateString = expenseDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+        }
+        
+        const categoryIcons = {
+            Food: 'fa-utensils',
+            Transport: 'fa-bus',
+            Entertainment: 'fa-film',
+            Bills: 'fa-file-invoice-dollar',
+            Shopping: 'fa-shopping-bag',
+            Others: 'fa-ellipsis-h'
+        };
+        
+        const expenseItem = document.createElement('div');
+        expenseItem.className = 'expense-item';
+        expenseItem.innerHTML = `
+            <div class="expense-info">
+                <div class="expense-category">
+                    <i class="fas ${categoryIcons[expense.category] || 'fa-wallet'}"></i>
+                </div>
+                <div class="expense-details">
+                    <div class="expense-name">${expense.description}</div>
+                    <div class="expense-date">${dateString} • ${expense.category}</div>
+                </div>
+            </div>
+            <div class="expense-amount ${expense.type === 'income' ? 'income' : 'expense'}">
+                ${formatCurrency(parseFloat(expense.amount))}
+            </div>
+            <div class="expense-actions">
+                <button class="action-btn edit-btn" data-id="${expense.id}"><i class="fas fa-edit"></i></button>
+                <button class="action-btn delete-btn" data-id="${expense.id}"><i class="fas fa-trash"></i></button>
+            </div>
+        `;
+        
+        expensesContainer.appendChild(expenseItem);
+        
+        // Add event listeners to buttons for this expense item
+        expenseItem.querySelector('.edit-btn').addEventListener('click', function() {
+            editExpense(expense.id);
+        });
+        
+        expenseItem.querySelector('.delete-btn').addEventListener('click', function() {
+            deleteExpense(expense.id);
+        });
+    });
+}
+
+// Add a new expense
+function addExpense(expense) {
+    expense.id = Date.now();
+    expense.type = 'expense'; // Ensure type is always set
+    expenses.push(expense);
+    localStorage.setItem('expenses', JSON.stringify(expenses));
+    renderExpenses();
+    updateSummary();
+    updateCategoryLimits();
+    alert('Expense added successfully!');
+}
+
+// Edit an expense
+function editExpense(id) {
+    const expense = expenses.find(e => e.id === id);
+    if (!expense) return;
+    
+    // Fill the form with existing data
+    document.getElementById('expenseName').value = expense.description;
+    document.getElementById('expenseAmount').value = expense.amount;
+    document.getElementById('expenseCategory').value = expense.category;
+    document.getElementById('expenseDate').value = expense.date;
+    document.getElementById('expensePayment').value = expense.paymentMethod || 'cash';
+    
+    // Change the modal title
+    document.querySelector('#expenseModal h3').textContent = 'Edit Expense';
+    
+    // Show the modal
+    expenseModal.style.display = 'flex';
+    
+    // Remove previous submit handler to avoid duplicates
+    const expenseForm = document.getElementById('expenseForm');
+    const newForm = expenseForm.cloneNode(true);
+    expenseForm.parentNode.replaceChild(newForm, expenseForm);
+    
+    // Add new submit handler
+    document.getElementById('expenseForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Update the expense
+        expense.description = document.getElementById('expenseName').value;
+        expense.amount = parseFloat(document.getElementById('expenseAmount').value);
+        expense.category = document.getElementById('expenseCategory').value;
+        expense.date = document.getElementById('expenseDate').value;
+        expense.paymentMethod = document.getElementById('expensePayment').value;
+        
+        // Save to localStorage
+        localStorage.setItem('expenses', JSON.stringify(expenses));
+        
+        // Update UI
+        renderExpenses();
+        updateSummary();
+        updateCategoryLimits();
+        
+        // Close modal
+        expenseModal.style.display = 'none';
+        document.getElementById('expenseForm').reset();
+        document.querySelector('#expenseModal h3').textContent = 'Add New Expense';
+        
+        alert('Expense updated successfully!');
+    });
+}
+
+// Delete an expense
+function deleteExpense(id) {
+    if (confirm('Are you sure you want to delete this expense?')) {
+        expenses = expenses.filter(expense => expense.id !== id);
+        localStorage.setItem('expenses', JSON.stringify(expenses));
+        renderExpenses();
+        updateSummary();
+        updateCategoryLimits();
+        alert('Expense deleted successfully!');
+    }
+}
+
+// Add a new limit
+function addLimit(category, amount, period) {
+    categoryLimits[category] = amount;
+    localStorage.setItem('categoryLimits', JSON.stringify(categoryLimits));
+    updateCategoryLimits();
+    alert('Limit added successfully!');
+}
+
+// Edit a limit
+function editLimit(category) {
+    const currentAmount = categoryLimits[category] || 0;
+    
+    // Fill the form with existing data
+    document.getElementById('limitCategory').value = category;
+    document.getElementById('limitAmount').value = currentAmount;
+    
+    // Change the modal title
+    document.querySelector('#limitModal h3').textContent = 'Edit Expense Limit';
+    
+    // Show the modal
+    limitModal.style.display = 'flex';
+    
+    // Remove previous submit handler to avoid duplicates
+    const limitForm = document.getElementById('limitForm');
+    const newForm = limitForm.cloneNode(true);
+    limitForm.parentNode.replaceChild(newForm, limitForm);
+    
+    // Add new submit handler
+    document.getElementById('limitForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const amount = parseFloat(document.getElementById('limitAmount').value);
+        const period = document.getElementById('limitPeriod').value;
+        
+        // Update the limit
+        categoryLimits[category] = amount;
+        localStorage.setItem('categoryLimits', JSON.stringify(categoryLimits));
+        
+        // Update UI
+        updateCategoryLimits();
+        
+        // Close modal
+        limitModal.style.display = 'none';
+        document.getElementById('limitForm').reset();
+        document.querySelector('#limitModal h3').textContent = 'Add Expense Limit';
+        
+        alert('Limit updated successfully!');
+    });
+}
+
+// Delete a limit
+function deleteLimit(category) {
+    if (confirm(`Are you sure you want to delete the ${category} limit?`)) {
+        delete categoryLimits[category];
+        localStorage.setItem('categoryLimits', JSON.stringify(categoryLimits));
+        updateCategoryLimits();
+        alert('Limit deleted successfully!');
+    }
+}
+
+// Show all expenses in modal
+function showAllExpenses() {
+    renderExpenses(expenses, 'allExpensesContainer', true);
+    viewAllModal.style.display = 'flex';
+}
+
+// Handle login
+function login(email, password) {
+    const users = JSON.parse(localStorage.getItem('users')) || [];
+    const user = users.find(u => u.email === email && u.password === password);
+    
+    if (user) {
+        currentUser = user;
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        alert('Login successful!');
+        loginModal.style.display = 'none';
+        checkAuthStatus();
+        renderExpenses();
+        updateSummary();
+        updateCategoryLimits();
+        return true;
+    } else {
+        alert('Invalid email or password');
+        return false;
+    }
+}
+
+// Handle signup
+function signup(name, email, password) {
+    const users = JSON.parse(localStorage.getItem('users')) || [];
+    
+    if (users.some(u => u.email === email)) {
+        alert('Email already registered');
+        return false;
+    }
+    
+    const newUser = {
+        id: Date.now(),
+        name,
+        email,
+        password
+    };
+    
+    users.push(newUser);
+    localStorage.setItem('users', JSON.stringify(users));
+    localStorage.setItem('currentUser', JSON.stringify(newUser));
+    
+    alert('Account created successfully!');
+    signupModal.style.display = 'none';
+    checkAuthStatus();
+    renderExpenses();
+    updateSummary();
+    updateCategoryLimits();
+    return true;
+}
+
+// Handle logout
+function logout() {
+    currentUser = null;
+    localStorage.removeItem('currentUser');
+    checkAuthStatus();
+    resetData();
+    alert('Logged out successfully!');
+}
+
+// Setup event listeners
+function setupEventListeners() {
+    // Navbar toggle for mobile
+    document.getElementById('navbarToggle').addEventListener('click', function() {
+        document.getElementById('navbarLinks').classList.toggle('active');
+    });
+
+    // Modal open buttons
+    addExpenseBtn.addEventListener('click', function() {
+        if (!currentUser) {
+            alert('Please login to add expenses');
+            loginModal.style.display = 'flex';
+            return;
+        }
+        document.getElementById('expenseDate').valueAsDate = new Date();
+        document.querySelector('#expenseModal h3').textContent = 'Add New Expense';
+        expenseModal.style.display = 'flex';
+    });
+
+    addLimitBtn.addEventListener('click', function() {
+        if (!currentUser) {
+            alert('Please login to add limits');
+            loginModal.style.display = 'flex';
+            return;
+        }
+        document.querySelector('#limitModal h3').textContent = 'Add Expense Limit';
+        limitModal.style.display = 'flex';
+    });
+
+    viewAllBtn.addEventListener('click', showAllExpenses);
+
+    // Login/Signup buttons
+    if (openLoginBtn) {
+        openLoginBtn.addEventListener('click', () => {
+            loginModal.style.display = 'flex';
+        });
+    }
+
+    if (openSignupBtn) {
+        openSignupBtn.addEventListener('click', () => {
+            signupModal.style.display = 'flex';
+        });
+    }
+
+    switchToSignup.addEventListener('click', () => {
+        loginModal.style.display = 'none';
+        signupModal.style.display = 'flex';
+    });
+
+    switchToLogin.addEventListener('click', () => {
+        signupModal.style.display = 'none';
+        loginModal.style.display = 'flex';
+    });
+
+    // Close modals
+    document.querySelectorAll('.close-modal').forEach(btn => {
+        btn.addEventListener('click', function() {
+            expenseModal.style.display = 'none';
+            limitModal.style.display = 'none';
+            loginModal.style.display = 'none';
+            signupModal.style.display = 'none';
+            viewAllModal.style.display = 'none';
+        });
+    });
+
+    document.getElementById('cancelExpenseBtn').addEventListener('click', function() {
+        expenseModal.style.display = 'none';
+    });
+
+    document.getElementById('cancelLimitBtn').addEventListener('click', function() {
+        limitModal.style.display = 'none';
+    });
+
+    window.addEventListener('click', function(e) {
+        if (e.target === expenseModal) expenseModal.style.display = 'none';
+        if (e.target === limitModal) limitModal.style.display = 'none';
+        if (e.target === loginModal) loginModal.style.display = 'none';
+        if (e.target === signupModal) signupModal.style.display = 'none';
+        if (e.target === viewAllModal) viewAllModal.style.display = 'none';
+    });
+
+    // Form submissions
+    document.getElementById('expenseForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const newExpense = {
+            description: document.getElementById('expenseName').value,
+            amount: parseFloat(document.getElementById('expenseAmount').value),
+            category: document.getElementById('expenseCategory').value,
+            date: document.getElementById('expenseDate').value,
+            type: 'expense',
+            paymentMethod: document.getElementById('expensePayment').value
+        };
+        
+        addExpense(newExpense);
+        expenseModal.style.display = 'none';
+        this.reset();
+    });
+
+    document.getElementById('limitForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const category = document.getElementById('limitCategory').value;
+        const amount = parseFloat(document.getElementById('limitAmount').value);
+        const period = document.getElementById('limitPeriod').value;
+        
+        addLimit(category, amount, period);
+        limitModal.style.display = 'none';
+        this.reset();
+    });
+
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+        
+        login(email, password);
+        this.reset();
+    });
+
+    document.getElementById('signupForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const name = document.getElementById('signupName').value;
+        const email = document.getElementById('signupEmail').value;
+        const password = document.getElementById('signupPassword').value;
+        const confirmPassword = document.getElementById('signupConfirmPassword').value;
+        
+        if (password !== confirmPassword) {
+            alert('Passwords do not match');
+            return;
+        }
+        
+        signup(name, email, password);
+        this.reset();
+    });
+
+    // Filter functionality
+    document.getElementById('monthFilter').addEventListener('change', function() {
+        const month = this.value;
+        if (!month) {
+            renderExpenses();
+            return;
+        }
+        
+        const filteredExpenses = expenses.filter(expense => {
+            const expenseDate = new Date(expense.date);
+            return (expenseDate.getMonth() + 1).toString() === month;
+        });
+        
+        renderExpenses(filteredExpenses);
+    });
+
+    document.getElementById('categoryFilter').addEventListener('change', function() {
+        const category = this.value;
+        if (!category) {
+            renderExpenses();
+            return;
+        }
+        
+        const filteredExpenses = expenses.filter(expense => expense.category.toLowerCase() === category);
+        renderExpenses(filteredExpenses);
+    });
+
+    document.getElementById('searchExpense').addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        if (!searchTerm) {
+            renderExpenses();
+            return;
+        }
+        
+        const filteredExpenses = expenses.filter(expense => 
+            expense.description.toLowerCase().includes(searchTerm) || 
+            expense.category.toLowerCase().includes(searchTerm)
+        );
+        
+        renderExpenses(filteredExpenses);
+    });
+}
+    </script>
+</body>
+</html>    
